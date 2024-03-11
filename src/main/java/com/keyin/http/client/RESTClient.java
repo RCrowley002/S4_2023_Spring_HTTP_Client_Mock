@@ -15,15 +15,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RESTClient {
+    // removed hard coded Url and replaced with a method to be able to set the Url to whatever the user wants
+    private String defaultUrl = "http://localhost:8080/airports";
+
+    public void setUrl(String defaultUrl) {
+        this.defaultUrl = defaultUrl;
+    }
+
     public List<Airport> getAllAirports() {
-        List<Airport> airports = new ArrayList<Airport>();
+        List<Airport> airports = new ArrayList<>();
 
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8080/airports")).build();
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(defaultUrl)).build();
 
         try {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode()==200) {
+            if (response.statusCode() == 200) {
                 System.out.println("***** " + response.body());
             } else {
                 System.out.println("Error Status Code: " + response.statusCode());
@@ -31,17 +38,15 @@ public class RESTClient {
 
             airports = buildAirportListFromResponse(response.body());
 
-
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-
 
         return airports;
     }
 
     public List<Airport> buildAirportListFromResponse(String response) throws JsonProcessingException {
-        List<Airport> airports = new ArrayList<Airport>();
+        List<Airport> airports = new ArrayList<>();
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

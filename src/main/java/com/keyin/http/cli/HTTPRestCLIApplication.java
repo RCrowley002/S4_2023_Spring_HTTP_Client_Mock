@@ -42,13 +42,20 @@ public class HTTPRestCLIApplication {
     }
 
     public static void main(String[] args) {
-        for (String arg : args) {
-            System.out.println(arg);
+        // Check if the URL is provided as a command-line argument
+        String url = "http://localhost:8080/airports";
+        if (args.length > 0) {
+            url = args[0];
         }
+
 
         HTTPRestCLIApplication cliApp = new HTTPRestCLIApplication();
 
-        cliApp.setRestClient(new RESTClient());
+        // Set the URL for the RESTClient dynamically
+        RESTClient restClient = new RESTClient();
+        restClient.setUrl(url);
+        cliApp.setRestClient(restClient);
+
 
         cliApp.generateAirportReport();
     }
